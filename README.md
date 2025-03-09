@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # grasshopper
 =======
 # Vue 3 + TypeScript + Vite
