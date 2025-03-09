@@ -5,7 +5,7 @@
             <el-col :span="12" :xs="24">
                 <el-form :model="loginForm" :rules="rules" class="login_form" ref="loginFormRef">
                     <h1>hello</h1>
-                    <h2> welcome to X </h2>
+                    <h2> 欢迎来到全民制作人平台 </h2>
                     <el-form-item prop="username">
                         <el-input :prefix-icon="User" v-model="loginForm.username">
 

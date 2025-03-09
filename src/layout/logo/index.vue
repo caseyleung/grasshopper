@@ -1,13 +1,16 @@
 <template>
     <div class="logo_container">
-        <img :src="setting.logo" alt="" v-if="setting.logoHidden"></img>
-        <p> {{ setting.title }} </p>
+        <img :src="setting.logo" alt="" v-if="!setting.hidden"></img>
+        <p v-if="!$layoutSettingStore.fold"> {{ setting.title }} </p>
 
     </div>
 </template>
 
 <script setup lang="ts">
 import setting from '@/setting';
+import useLayoutSettingStore from '@/store/modules/setting';
+
+let $layoutSettingStore = useLayoutSettingStore();
 
 </script>
 
@@ -17,16 +20,24 @@ import setting from '@/setting';
     height: $base-menu-logo-height;
     display: flex;
     align-items: center;
-    padding: 20px;
+    padding: 10px;
 
     img {
-        width: 60px;
-        height: 50px;
+        width: 38px;
+        height: 38px;
+        // margin-left: 10px;
     }
 
     p {
         font-size: $base-menu-logo-title-szie;
-        margin-left: 30px;
+        margin-left: 12px;
+        font-family: "Inter", "Arial", sans-serif;
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        text-shadow: 0.5px 0.5px 1px rgba(0, 0, 0, 0.1);
+        line-height: 1.4;
+        white-space: nowrap;
+        transition: all, .9s;
     }
 }
 </style>
