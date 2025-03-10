@@ -1,5 +1,6 @@
 import axios from "axios";
 import { ElMessage } from "element-plus";
+import useUserStore from "../store/modules/user";
 
 // 创建axios实列
 let request = axios.create({
@@ -9,6 +10,13 @@ let request = axios.create({
 
 // 请求拦截器
 request.interceptors.request.use((config) => {
+  // conifg 配置对象，headers属性请求头，给服务端携带公共参数
+  let userStore = useUserStore();
+  let token = userStore.token;
+  if (token) {
+    config.headers.token = token;
+  }
+  
   return config;
 });
 

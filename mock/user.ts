@@ -2,8 +2,8 @@ function createUserList() {
   return [
     {
       userId: 1,
-      avatar: "",
-      username: "admin",
+      avatar: "/ikun.png",
+      username: "ikun",
       password: "111",
       desc: "平台管理员",
       roles: ["平台管理员"],
@@ -47,12 +47,12 @@ export default [
     url: "/api/user/info",
     method: "get",
     timeout: 2000,
-    response: (request) => {
+    response: (request:any) => {
       const token = request.headers.token;
       const checkUser = createUserList().find((item) => item.token === token);
       if (!checkUser)
         return { code: 201, data: { message: "获取用户信息失败" } };
-      return { code: 200, data: { token } };
+      return { code: 200, data: checkUser };
     },
   },
 ];

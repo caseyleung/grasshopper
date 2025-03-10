@@ -7,7 +7,7 @@ import type { UserState } from "./types/type.ts";
 import { SET_TOKEN, GET_TOKEN } from "../../utils/token.ts";
 // 引入路由
 import { constantRoute } from "../../router/routes.ts";
-
+import { reqUserInfo } from "../../api/user/index.ts";
 
 let useUserStore = defineStore("User", {
   // 小仓库存储数据的地方
@@ -15,6 +15,8 @@ let useUserStore = defineStore("User", {
     return {
       token: GET_TOKEN(),
       menuRoutes: constantRoute, // 仓库存储生成菜单需要的数组（路由）
+      username: '',
+      avatar: '',
     };
   },
   // 异步或者逻辑的地方
@@ -29,6 +31,14 @@ let useUserStore = defineStore("User", {
         return Promise.resolve(result); // 成功返回
       } else {
         return Promise.reject(result.data); // 失败返回
+      }
+    },
+    async userInfo() {
+      let result = await reqUserInfo();
+      // 存储用户信息
+      if (result.code == 200) {
+        this.username = result.data.username;
+        this.avatar = result.data.avatar;
       }
     },
   },

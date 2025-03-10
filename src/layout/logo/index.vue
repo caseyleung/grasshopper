@@ -1,6 +1,6 @@
 <template>
     <div class="logo_container">
-        <img :src="setting.logo" alt="" v-if="!setting.hidden"></img>
+        <img :src="setting.logo" alt="" v-if="!setting.hidden" style="border-radius: 10px;"></img>
         <p v-if="!$layoutSettingStore.fold"> {{ setting.title }} </p>
 
     </div>

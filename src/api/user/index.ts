@@ -12,5 +12,5 @@ export const reqLogin = (data: loginForm) => {
 };
 
 export const reqUserInfo = () => {
-  return request.get<any, userResponse>(API.USER_INFO_URL);
+  return request.get<userResponse>(API.USER_INFO_URL);
 };

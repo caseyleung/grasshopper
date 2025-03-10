@@ -44,7 +44,7 @@ let userStore = useUserStore();
 let $router = useRouter();
 
 let loginForm = reactive({
-    username: 'admin',
+    username: 'ikun',
     password: '111',
 })
 

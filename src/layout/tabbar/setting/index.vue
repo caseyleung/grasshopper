@@ -3,11 +3,11 @@
     <el-button size="small" icon="FullScreen" @click="fullSreen" circle></el-button>
     <el-button size="small" icon="Setting" circle></el-button>
     <el-avatar :size="28" fit shape="square" style="margin-left: 10px; background-color: whitesmoke;">
-        <img src="/ikun.png" />
+        <img :src="userStore.avatar" />
     </el-avatar>
     <el-dropdown style="margin-left: 10px;">
         <span class="el-dropdown-link">
-            ikun
+            {{userStore.username}}
             <el-icon class="el-icon--right"><arrow-down /></el-icon>
         </span>
         <template #dropdown>
@@ -22,6 +22,9 @@
 
 <script setup lang="ts">
 import useLayoutSettingStore from '@/store/modules/setting';
+import useUserStore from '@/store/modules/user';
+
+let userStore = useUserStore();
 
 let layoutSettingStore = useLayoutSettingStore();
 
