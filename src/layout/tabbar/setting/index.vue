@@ -7,12 +7,12 @@
     </el-avatar>
     <el-dropdown style="margin-left: 10px;">
         <span class="el-dropdown-link">
-            {{userStore.username}}
+            {{ userStore.username }}
             <el-icon class="el-icon--right"><arrow-down /></el-icon>
         </span>
         <template #dropdown>
             <el-dropdown-menu>
-                <el-dropdown-item icon="SwitchButton">退出登录</el-dropdown-item>
+                <el-dropdown-item icon="SwitchButton" @click="logout">退出登录</el-dropdown-item>
                 <el-dropdown-item icon="CirclePlusFilled">Action 2</el-dropdown-item>
                 <el-dropdown-item icon="CircleCheck">Action 3</el-dropdown-item>
             </el-dropdown-menu>
@@ -23,6 +23,10 @@
 <script setup lang="ts">
 import useLayoutSettingStore from '@/store/modules/setting';
 import useUserStore from '@/store/modules/user';
+import { useRouter, useRoute } from 'vue-router';
+
+let $router = useRouter();
+let route = useRoute();
 
 let userStore = useUserStore();
 
@@ -41,6 +45,15 @@ const fullSreen = () => {
     }
 }
 
+const logout = () => {
+    // 1.向服务器发请求[退出登录接口]：清除token
+    // 2. 仓库中相关数据清空
+    // 3. 跳转到登录页面
+    userStore.userLogout();
+    // $router.replace('/login');
+    $router.push({ path: '/login', query: { redirect: route?.path || '/' } });
+
+}
 </script>
 
 <style scoped></style>

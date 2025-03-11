@@ -11,6 +11,7 @@ import { onMounted } from 'vue';
 
 let userStore = useUserStore();
 
+// todo 进来后才加载不够丝滑
 onMounted(() => {
     userStore.userInfo();
 })

@@ -4,7 +4,7 @@ import { defineStore } from "pinia";
 import { reqLogin } from "@/api/user";
 import { loginForm, loginResponse } from "@/api/user/type";
 import type { UserState } from "./types/type.ts";
-import { SET_TOKEN, GET_TOKEN } from "../../utils/token.ts";
+import { SET_TOKEN, GET_TOKEN, REMOVE_TOKEN } from "../../utils/token.ts";
 // 引入路由
 import { constantRoute } from "../../router/routes.ts";
 import { reqUserInfo } from "../../api/user/index.ts";
@@ -15,8 +15,8 @@ let useUserStore = defineStore("User", {
     return {
       token: GET_TOKEN(),
       menuRoutes: constantRoute, // 仓库存储生成菜单需要的数组（路由）
-      username: '',
-      avatar: '',
+      username: "",
+      avatar: "",
     };
   },
   // 异步或者逻辑的地方
@@ -40,6 +40,12 @@ let useUserStore = defineStore("User", {
         this.username = result.data.username;
         this.avatar = result.data.avatar;
       }
+    },
+    userLogout() {
+      this.token = "";
+      this.username = "";
+      this.avatar = "";
+      REMOVE_TOKEN();
     },
   },
   getters: {},

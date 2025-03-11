@@ -35,13 +35,14 @@ import { getTime } from '@/utils/time';
 import { User, Lock } from '@element-plus/icons-vue';
 import { ElNotification } from 'element-plus';
 import { reactive, ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 
 
 let loading = ref(false);
 
 let userStore = useUserStore();
 let $router = useRouter();
+let route = useRoute();
 
 let loginForm = reactive({
     username: 'ikun',
@@ -67,7 +68,9 @@ const login = async () => {
     // 请求失败 --> 弹出登录失败信息
     try {
         await userStore.userLogin(loginForm);
-        $router.push('/')
+        // 判断登陆时路径是否有query参数，有就跳到query参数里，没有就跳首页
+        let redirect: any = route.query.redirect;
+        $router.push({ path: redirect || '/' })
         // 登录成功的提示信息
         ElNotification({
             type: 'success',
@@ -157,7 +160,7 @@ const rules = {
         }
 
         .login_btn {
-            width: 100%;
+            width: 100%;      
         }
     }
 }
