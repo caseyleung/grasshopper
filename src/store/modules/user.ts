@@ -39,6 +39,10 @@ let useUserStore = defineStore("User", {
       if (result.code == 200) {
         this.username = result.data.username;
         this.avatar = result.data.avatar;
+        localStorage.setItem('username', result.data.username);
+        return 'ok';
+      } else {
+        return Promise.reject('获取用户信息失败');
       }
     },
     userLogout() {

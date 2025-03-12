@@ -1,20 +1,11 @@
 <template>
     <div>
-        <h1> hi, {{ userStore.username }} </h1>
+        <h1> hi, 欢迎来到首页 </h1>
 
     </div>
 </template>
 
 <script setup lang="ts">
-import useUserStore from '@/store/modules/user';
-import { onMounted } from 'vue';
-
-let userStore = useUserStore();
-
-// todo 进来后才加载不够丝滑
-onMounted(() => {
-    userStore.userInfo();
-})
 
 </script>
 

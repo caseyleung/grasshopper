@@ -1,7 +1,7 @@
 // 封装本地存储数据与读取数据的方法
 
 export const SET_TOKEN = (token: string) => {
-  localStorage.setItem("TOEKN", token);
+  localStorage.setItem("TOKEN", token);
 };
 
 export const GET_TOKEN = () => {
