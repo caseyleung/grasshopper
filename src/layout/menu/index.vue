@@ -34,7 +34,6 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps } from "vue";
 
 // 递归组件需要正确注册
 defineProps<{ menuList: any[] }>();
