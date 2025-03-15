@@ -2,7 +2,7 @@
     <el-button size="small" icon="Refresh" @click="updateRefresh" circle></el-button>
     <el-button size="small" icon="FullScreen" @click="fullSreen" circle></el-button>
     <el-button size="small" icon="Setting" circle></el-button>
-    <el-avatar :size="28" fit shape="square" style="margin-left: 10px; background-color: whitesmoke;">
+    <el-avatar :size="28" fit shape="square" class="avatar_icon">
         <img :src="userStore.avatar" />
     </el-avatar>
     <el-dropdown style="margin-left: 10px;">
@@ -56,4 +56,13 @@ const logout = () => {
 }
 </script>
 
-<style scoped></style>
+<style scoped lang="scss">
+.avatar_icon {
+    margin-left: 10px; 
+    background-color: whitesmoke;
+}
+
+.avatar_icon:hover {
+    transform: scale(2);
+}
+</style>

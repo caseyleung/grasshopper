@@ -1,6 +1,6 @@
 <template>
     <div class="logo_container">
-        <img :src="setting.logo" alt="" v-if="!setting.hidden" style="border-radius: 10px;"></img>
+        <img :src="setting.logo" alt="" v-if="!setting.hidden"></img>
         <p v-if="!$layoutSettingStore.fold"> {{ setting.title }} </p>
 
     </div>
@@ -25,7 +25,12 @@ let $layoutSettingStore = useLayoutSettingStore();
     img {
         width: 38px;
         height: 38px;
+        border-radius: 10px;
         // margin-left: 10px;
+    }
+
+    img:hover{
+        transform: rotate(40deg) scale(1.2);
     }
 
     p {
