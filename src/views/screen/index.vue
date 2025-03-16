@@ -50,7 +50,7 @@ window.onresize = () => {
 .container {
     width: 100vw;
     height: 100vh;
-    background-size: cover;
+    background-size: 100% 100%;
 
     .screen {
         position: fixed;
@@ -87,12 +87,10 @@ window.onresize = () => {
 
             .gender {
                 flex: 1;
-                background: orange;
             }
 
             .age {
                 flex: 1;
-                background: pink;
             }
         }
 

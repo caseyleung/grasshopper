@@ -52,7 +52,7 @@ onUnmounted(() => {
     .left {
         flex: 1.8;
         background: url(/screen/dataScreen-header-left-bg.png) no-repeat;
-        background-size: cover;
+        background-size: 100% 100%;
 
         .lbtn {
             width: 150px;
@@ -88,7 +88,7 @@ onUnmounted(() => {
     .right {
         flex: 1.8;
         background: url(/screen/dataScreen-header-right-bg.png) no-repeat;
-        background-size: cover;
+        background-size: 100% 100%;
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -104,7 +104,7 @@ onUnmounted(() => {
             letter-spacing: 2px;
             cursor: pointer;
             background: url(/screen/dataScreen-header-btn-bg-r.png) no-repeat;
-            background-size: cover;
+            background-size: 100% 100%;
         }
 
         .time {
