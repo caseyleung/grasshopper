@@ -72,7 +72,7 @@ onMounted(() => {
         margin-left: 20px;
 
         .title {
-            font-size: 28px;
+            font-size: 24px;
         }
 
         .bg {

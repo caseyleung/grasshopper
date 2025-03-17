@@ -18,6 +18,14 @@ onMounted(() => {
     let mycharts = echarts.init(charts.value);
 
     let option = {
+        title: {
+            text: '饼状图',
+            textStyle: {
+                color: 'skyblue',
+            },
+            left: '5%',
+            top: 20,
+        },
         tooltip: {
             trigger: 'item'
         },
@@ -28,13 +36,14 @@ onMounted(() => {
             textStyle: {
                 color: 'white',
                 fontSize: 18,
-            }
+            },
         },
         series: [
             {
                 name: 'Access From',
                 type: 'pie',
                 radius: ['100%', '20%'],
+                top: 20,
                 avoidLabelOverlap: false,
                 itemStyle: {
                     borderRadius: 10,
@@ -81,12 +90,12 @@ onMounted(() => {
     margin-top: 20px;
 
     .title {
-        margin-left: 10px;
-        margin-top: -10px;
+        margin-left: 20px;
+        margin-top: -5px;
 
         p {
             color: white;
-            font-size: 28px;
+            font-size: 24px;
         }
     }
 

@@ -10,7 +10,10 @@
                     <Gender class="gender"></Gender>
                     <Age class="age"></Age>
                 </div>
-                <div class="center">center</div>
+                <div class="center">
+                    <Map class="map"></Map>
+                    <Line class="line"></Line>
+                </div>
                 <div class="right">right</div>
             </div>
         </div>
@@ -24,6 +27,8 @@ import Top from './top/index.vue';
 import Tourist from './left/tourist/index.vue';
 import Gender from './left/gender/index.vue';
 import Age from './left/age/index.vue';
+import Map from './map/index.vue';
+import Line from './line/index.vue';
 
 
 let screen = ref();
@@ -50,7 +55,8 @@ window.onresize = () => {
 .container {
     width: 100vw;
     height: 100vh;
-    background-size: 100% 100%;
+    // background-size: cover;
+    background-color: wheat;
 
     .screen {
         position: fixed;
@@ -80,15 +86,8 @@ window.onresize = () => {
             display: flex;
             flex-direction: column;
 
-            .tourist {
-                flex: 1;
-                // background: aqua;
-            }
-
-            .gender {
-                flex: 1;
-            }
-
+            .tourist,
+            .gender,
             .age {
                 flex: 1;
             }
@@ -96,15 +95,23 @@ window.onresize = () => {
 
         .center {
             flex: 2;
-            height: 1040px;
-            // background: skyblue;
+            display: flex;
+            flex-direction: column;
+
+            .map {
+                flex: 3;
+            }
+
+            .line {
+                flex: 1;
+            }
         }
 
 
         .right {
             flex: 1;
             height: 1040px;
-            // background: red;
+            // background: chocolate;
         }
     }
 }

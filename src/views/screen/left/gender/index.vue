@@ -90,7 +90,7 @@ onMounted(() => {
 
         p {
             color: white;
-            font-size: 28px;
+            font-size: 24px;
         }
     }
 
