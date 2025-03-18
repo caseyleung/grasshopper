@@ -116,10 +116,7 @@ window.onresize = () => {
             flex-direction: column;
             margin-left: 20px;
 
-            .rank{
-                flex: 1.5;
-            }
-
+            .rank,
             .year,
             .counter {
                 flex: 1;

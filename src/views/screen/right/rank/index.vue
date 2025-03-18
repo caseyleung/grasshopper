@@ -31,13 +31,13 @@
 import { ref, onMounted } from 'vue'
 import * as echarts from 'echarts'
 
-let rank = ref([1, 2, 3, 4, 5, 6]);
+let rank = ref([1, 2, 3, 4, 5]);
 
-let place = ref(["峨眉山", "稻城亚丁", "九寨沟", "万里长城", "北京故宫", "黄山"]);
+let place = ref(["峨眉山", "稻城亚丁", "九寨沟", "万里长城", "北京故宫"]);
 
-let total = ref(['8.00w', '6.00w', '5.00w', '4.00w', '3.00w', '2.50w']);
+let total = ref(['8.00w', '6.00w', '5.00w', '4.00w', '3.00w']);
 
-let colorList = ['#a4e182', '#6279d8', '#89d2f4', '#fbdd63', '#f56e74', '#6495ed'];
+let colorList = ['#a4e182', '#6279d8', '#89d2f4', '#fbdd63', '#f56e74'];
 
 let charts = ref();
 
@@ -56,7 +56,7 @@ onMounted(() => {
         series: [
             {
                 type: 'bar',
-                data: [25, 30, 40, 50, 60, 80],
+                data: [30, 40, 50, 60, 80],
                 barWidth: '20%',
                 showBackground: true,
                 backgroundStyle: {
@@ -79,7 +79,7 @@ onMounted(() => {
             left: '5%',
             right: '12%',
             top: '1%',
-            bottom: '-1%',
+            bottom: '10%',
             containLabel: true
         }
     }
