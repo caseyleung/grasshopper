@@ -22,7 +22,6 @@
 
 <script setup lang="ts">
 import * as echarts from 'echarts';
-import { min } from 'moment';
 import { onMounted, ref } from 'vue';
 
 let charts = ref()

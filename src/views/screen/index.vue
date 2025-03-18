@@ -14,10 +14,13 @@
                     <Map class="map"></Map>
                     <Line class="line"></Line>
                 </div>
-                <div class="right">right</div>
+                <div class="right">
+                    <Rank class="rank"></Rank>
+                    <Year class="year"></Year>
+                    <Counter class="counter"></Counter>
+                </div>
             </div>
         </div>
-
     </div>
 </template>
 
@@ -27,8 +30,11 @@ import Top from './top/index.vue';
 import Tourist from './left/tourist/index.vue';
 import Gender from './left/gender/index.vue';
 import Age from './left/age/index.vue';
-import Map from './map/index.vue';
-import Line from './line/index.vue';
+import Map from './center/map/index.vue';
+import Line from './center/line/index.vue';
+import Rank from './right/rank/index.vue';
+import Year from './right/year/index.vue';
+import Counter from './right/counter/index.vue';
 
 
 let screen = ref();
@@ -55,16 +61,13 @@ window.onresize = () => {
 .container {
     width: 100vw;
     height: 100vh;
-    // background-size: cover;
-    background-color: wheat;
+    background: url(/screen/bg.png) no-repeat;
+    background-size: 100% 100%;
 
     .screen {
         position: fixed;
         width: 1920px;
         height: 1080px;
-        // background-color: antiquewhite;
-        background: url(/screen/bg.png) no-repeat;
-        background-size: 100% 100%;
         left: 50%;
         top: 50%;
         transform-origin: left top;
@@ -73,7 +76,6 @@ window.onresize = () => {
     .top {
         width: 100%;
         height: 40px;
-        // background-color: chocolate;
     }
 
 
@@ -110,8 +112,18 @@ window.onresize = () => {
 
         .right {
             flex: 1;
-            height: 1040px;
-            // background: chocolate;
+            display: flex;
+            flex-direction: column;
+            margin-left: 20px;
+
+            .rank{
+                flex: 1.5;
+            }
+
+            .year,
+            .counter {
+                flex: 1;
+            }
         }
     }
 }

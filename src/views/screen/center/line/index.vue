@@ -45,6 +45,7 @@ onMounted(() => {
             type: 'category',
             boundaryGap: false,
             // data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
+            data: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30'], // x轴数据从1开始
             axisLine: {
                 lineStyle: {
                     color: 'white'
@@ -120,7 +121,8 @@ onMounted(() => {
     height: 100%;
     background: url(/screen/dataScreen-main-cb.png) no-repeat;
     background-size: 100% 100%;
-    margin: 0px 20px;
+    margin-left: 10px;
+    margin-right: 10px;
 
     .title {
         margin-left: 10px;
@@ -132,7 +134,6 @@ onMounted(() => {
     }
 
     .charts {
-        // width: 100%;
         height: calc(100% - 48px);
     }
 }

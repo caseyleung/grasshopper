@@ -47,7 +47,7 @@ const selectedDistrict = ref<number | null>(null);
 // **1. 读取 area.json**
 onMounted(async () => {
     try {
-        const response = await fetch("area_code_2022.json"); // 确保 area.json 在 public 目录
+        const response = await fetch("/src/area_code_2022.json"); // 确保 area.json 在 public 目录
         chinaData.value = await response.json();
         provinces.value = chinaData.value; // 顶层即省份
     } catch (error) {

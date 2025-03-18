@@ -7,7 +7,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import * as echarts from 'echarts';
-import chinaJson from '/public/china.json';
+import chinaJson from '/src/china.json';
 let map = ref();
 
 echarts.registerMap('china', chinaJson)
@@ -256,6 +256,5 @@ onMounted(() => {
 .box {
     width: 100%;
     height: 100%;
-    // background-color: #f00;
 }
 </style>
