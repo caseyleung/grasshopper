@@ -17,6 +17,15 @@ let charts = ref();
 onMounted(() => {
     let mycharts = echarts.init(charts.value);
 
+    let data = [
+        { value: 16, name: '10岁以下' },
+        { value: 8, name: '10-18岁' },
+        { value: 12, name: '18-30岁' },
+        { value: 24, name: '30-40岁' },
+        { value: 20, name: '40-60岁' },
+        { value: 20, name: '60岁以上' }
+    ]
+
     let option = {
         title: {
             text: '饼状图',
@@ -30,20 +39,27 @@ onMounted(() => {
             trigger: 'item'
         },
         legend: {
-            top: 10,
-            right: 30,
+            top: '10%',
+            right: '5%',
             orient: 'vertical',
+            itemGap: 14,
             textStyle: {
                 color: 'white',
-                fontSize: 18,
+                fontSize: 12,
+            },
+            formatter: (name) => {
+                let item = data.find(d => d.name === name);
+                return `${name}   ${item?.value}%`;
             },
         },
         series: [
             {
                 name: 'Access From',
                 type: 'pie',
-                radius: ['100%', '20%'],
-                top: 20,
+                radius: ['20%', '85%'],
+                top: '8%',
+                right: '15%',
+                bottom: '5%',
                 avoidLabelOverlap: false,
                 itemStyle: {
                     borderRadius: 10,
@@ -54,6 +70,7 @@ onMounted(() => {
                     show: true,
                     position: 'inside',
                     color: 'white',
+                    formatter: '{d}%',
                 },
                 emphasis: {
                     label: {
@@ -65,13 +82,7 @@ onMounted(() => {
                 labelLine: {
                     show: true
                 },
-                data: [
-                    { value: 1048, name: '军事' },
-                    { value: 735, name: '新闻' },
-                    { value: 580, name: '直播' },
-                    { value: 484, name: '娱乐' },
-                    { value: 300, name: '财经' }
-                ]
+                data: data,
             }
         ],
     };
@@ -100,8 +111,7 @@ onMounted(() => {
     }
 
     .charts {
-        height: 160px;
-        border-color: salmon;
+        height: calc(100% - 50px);
     }
 }
 </style>

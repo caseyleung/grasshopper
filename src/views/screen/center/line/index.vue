@@ -18,33 +18,26 @@ let charts = ref();
 onMounted(() => {
     let myChart = echarts.init(charts.value);
     let option = {
-        title: {
-            text: '访问量',
-            right: 40,
-            textStyle: {
-                color: 'white',
-                fontSize: 20,
-            }
+        tooltip: {
+            trigger: 'axis'
         },
-        // tooltip: {
-        //     trigger: 'axis'
-        // },
         legend: {
+            show: false,
             data: ['游客量'],
             textStyle: {
                 color: 'white',
             }
         },
         grid: {
-            left: '3%',
+            left: '2%',
             right: '4%',
+            top: '20%',
             bottom: '10%',
             containLabel: true
         },
         xAxis: {
             type: 'category',
             boundaryGap: false,
-            // data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
             data: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30'], // x轴数据从1开始
             axisLine: {
                 lineStyle: {
@@ -59,6 +52,12 @@ onMounted(() => {
             }
         },
         yAxis: {
+            name: '(单位：万人)',
+            nameTextStyle: {
+                color: 'white',
+                fontSize: 12,
+                align: 'center',
+            },
             type: 'value',
             axisLine: {
                 show: true,
@@ -71,17 +70,22 @@ onMounted(() => {
             },
             axisLabel: {
                 show: true,         // 显示标签
-                color: '#808080',   // 标签颜色（灰色）
+                color: 'white',   // 标签颜色（灰色）
                 fontSize: 12,       // 标签字体大小
-                fontWeight: 'bold', // 标签字体加粗
+                formatter: (value) => {
+                    return value >= 10000
+                        ? (value / 10000).toFixed(2).replace(/\.00$/, '') + 'w'
+                        : value;
+                }
             }
         },
         series: [
             {
                 name: '游客量',
                 type: 'line',
-                symbol: 'circle', // 圆点样式
-                symbolSize: 2, // 圆点大小
+                // symbol: 'circle', // 圆点样式
+                // symbolSize: 2, // 圆点大小
+                showSymbol: false,
                 // stack: '总量',
                 data: [11500, 1200, 23000, 12500, 17000, 20800, 4500, 8000, 15500, 22000,
                     24000, 18000, 24500, 7500, 9000, 24000, 24500, 28500, 21500, 7500,

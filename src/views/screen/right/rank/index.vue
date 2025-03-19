@@ -76,10 +76,10 @@ onMounted(() => {
             },
         ],
         grid: {
-            left: '5%',
+            left: '-4%',
             right: '12%',
             top: '1%',
-            bottom: '10%',
+            bottom: '-8%',
             containLabel: true
         }
     }
