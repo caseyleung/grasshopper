@@ -55,4 +55,16 @@ export default [
       return { code: 200, data: checkUser };
     },
   },
+  {
+    url: "/api/user/logout",
+    method: "post",
+    timeout: 2000,
+    response: (request:any) => {
+      const token = request.headers.token;
+      const checkUser = createUserList().find((item) => item.token === token);
+      if (!checkUser)
+        return { code: 201, data: { message: "失败" } };
+      return { code: 200, data: null, ok: true, message: '成功' };
+    },
+  },
 ];

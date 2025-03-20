@@ -37,14 +37,14 @@ export default defineConfig(({ command, mode }): UserConfig => {
       },
     },
     // 服务器代理
-    // server: {
-    //   proxy: {
-    //     [env.VITE_APP_TITLE]: {
-    //       target: env.VITE_SERVER,
-    //       changeOrigin: true,
-    //       rewrite: (path) => path.replace(/^\/api/, ''),
-    //     }
-    //   },
-    // },
+    server: {
+      proxy: {
+        [env.VITE_APP_TITLE]: {
+          target: env.VITE_SERVER,
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/api/, ''),
+        }
+      },
+    },
   };
 });

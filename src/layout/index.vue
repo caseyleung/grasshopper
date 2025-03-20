@@ -82,7 +82,7 @@ let $layoutSettingStore = useLayoutSettingStore();
         left: $base-menu-width;
         width: calc(100% - $base-menu-width);
         height: $base-tabbar-height;
-        // background-color: darkgrey;
+        background-color: rgb(231, 226, 226);
         transition: all, .9s;
 
 
@@ -98,7 +98,6 @@ let $layoutSettingStore = useLayoutSettingStore();
         left: $base-menu-width;
         width: calc(100% - $base-menu-width);
         height: calc(100% - $base-tabbar-height);
-        background-color: cornflowerblue;
         padding: 20px;
         overflow: auto;
         transition: all, .9s;

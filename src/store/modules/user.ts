@@ -1,13 +1,17 @@
 // 创建用户相关的小仓库
 
 import { defineStore } from "pinia";
-import { reqLogin } from "@/api/user";
-import { loginForm, loginResponse } from "@/api/user/type";
+// import { loginForm, loginResponse } from "@/api/user/type";
+import type {
+  loginFormData,
+  loginResponseData,
+  userInfoResponseData,
+} from "../../api/user/type.ts";
 import type { UserState } from "./types/type.ts";
 import { SET_TOKEN, GET_TOKEN, REMOVE_TOKEN } from "../../utils/token.ts";
 // 引入路由
 import { constantRoute } from "../../router/routes.ts";
-import { reqUserInfo } from "../../api/user/index.ts";
+import { reqLogin, reqUserInfo, reqLogout } from "../../api/user/index.ts";
 
 let useUserStore = defineStore("User", {
   // 小仓库存储数据的地方
@@ -21,8 +25,10 @@ let useUserStore = defineStore("User", {
   },
   // 异步或者逻辑的地方
   actions: {
-    async userLogin(data: loginForm) {
-      let result: loginResponse = await reqLogin(data);
+    // async userLogin(data: loginForm) {
+    async userLogin(data: loginFormData) {
+      // let result: loginResponse = await reqLogin(data);
+      let result: { code: number; data: { token: string } } = await reqLogin(data);
       // 成功 --> 返回token
       // 失败 --> 登录失败信息
       if (result.code === 200) {
@@ -34,18 +40,20 @@ let useUserStore = defineStore("User", {
       }
     },
     async userInfo() {
-      let result = await reqUserInfo();
+      let result: userInfoResponseData = await reqUserInfo();
       // 存储用户信息
       if (result.code == 200) {
         this.username = result.data.username;
         this.avatar = result.data.avatar;
-        localStorage.setItem('username', result.data.username);
-        return 'ok';
+        localStorage.setItem("username", result.data.username);
+        return "ok";
       } else {
-        return Promise.reject('获取用户信息失败');
+        return Promise.reject("获取用户信息失败");
       }
     },
-    userLogout() {
+    async userLogout() {
+      let result: any = await reqLogout();
+      console.log("rrrr", result);
       this.token = "";
       this.username = "";
       this.avatar = "";
