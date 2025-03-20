@@ -26,7 +26,7 @@ export default defineConfig(({ command, mode }): UserConfig => {
     ],
     resolve: {
       alias: {
-        "@": path.resolve(__dirname, "src"), // 相对路径别名，使用@代替是src
+        "@": path.resolve(__dirname, "./src"), // 相对路径别名，使用@代替是src
       },
     },
     css: {
