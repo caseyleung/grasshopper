@@ -26,9 +26,9 @@ request.interceptors.response.use(
     return response.data;
   },
   (error) => {
-    console.log(error);
+    console.log('error[interceptors.response]', error);
     let msg = "";
-    let status = error.response.status;
+    let status = error.code;
     switch (status) {
       case 401:
         msg = "Token过期";
@@ -43,7 +43,7 @@ request.interceptors.response.use(
         msg = "服务器出现错误";
         break;
       default:
-        msg = "网络出现问题";
+        msg = "服务器宕机或正在维护";
         break;
     }
     ElMessage({

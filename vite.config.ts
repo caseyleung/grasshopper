@@ -39,9 +39,10 @@ export default defineConfig(({ command, mode }): UserConfig => {
     // 服务器代理
     server: {
       proxy: {
-        [env.VITE_APP_TITLE]: {
+        [env.VITE_APP_BASEURL]: {
           target: env.VITE_SERVER,
           changeOrigin: true,
+          // rewrite: (path) => path.replace(new RegExp(`^${env.VITE_APP_BASEURL}`), ''),
           rewrite: (path) => path.replace(/^\/api/, ''),
         }
       },
