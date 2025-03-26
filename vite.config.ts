@@ -5,7 +5,7 @@ import path from "path";
 
 import { UserConfig } from "vite";
 import { viteMockServe } from "vite-plugin-mock";
-// import vueDevTools from 'vite-plugin-vue-devtools'
+import vueDevTools from 'vite-plugin-vue-devtools'
 
 // https://vite.dev/config/
 export default defineConfig(({ command, mode }): UserConfig => {
@@ -13,7 +13,7 @@ export default defineConfig(({ command, mode }): UserConfig => {
   return {
     plugins: [
       vue(),
-      // vueDevTools(),
+      vueDevTools(),
       createSvgIconsPlugin({
         iconDirs: [path.resolve(process.cwd(), "src/assets/icons")],
         symbolId: "icon-[dir]-[name]",
