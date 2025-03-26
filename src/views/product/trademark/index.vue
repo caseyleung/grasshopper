@@ -14,7 +14,7 @@
                         <img :src="row.logoUrl" alt="logo" class="logo-img" />
                     </template>
                 </el-table-column>
-                <el-table-column>
+                <el-table-column prop="raw" label="原数据" align="center">
                     <template #default="{ row }">
                         {{ row }}
                     </template>
@@ -22,7 +22,12 @@
                 <el-table-column prop="operate" label="操作" align="center">
                     <template #default="{ row }">
                         <el-button type="warning" size="small" icon="Edit" @click="updateTrademark(row)"></el-button>
-                        <el-button type="danger" size="small" icon="Delete" @click="deleteTrademark"></el-button>
+                        <el-popconfirm :title="`您确定要删除${row.tmName}吗？`" width="200px" icon="Delete" icon-color="red"
+                            @confirm="deleteTrademark(row.id)">
+                            <template #reference>
+                                <el-button type="danger" size="small" icon="Delete"></el-button>
+                            </template>
+                        </el-popconfirm>
                     </template>
                 </el-table-column>
             </el-table>
@@ -33,22 +38,23 @@
         </el-card>
         <!-- 对话框组件 -->
         <el-dialog v-model="dialogFormVisible" :title="trademarkParams.id ? '修改品牌' : '添加品牌'" width="500">
-            <el-form :model="trademarkParams" style="width: 80%;">
-                <el-form-item label="品牌名称" :label-width="formLabelWidth">
+            <!-- :ref="formRef" 不会自动绑定 ref 变量，（X） -->
+            <el-form :model="trademarkParams" style="width: 80%;" :rules="trademarkRules" ref="formRef">
+                <el-form-item label="品牌名称" :label-width="formLabelWidth" prop="tmName">
                     <el-input v-model="trademarkParams.tmName" autocomplete="off" placeholder="请输入品牌名称" />
                 </el-form-item>
-                <el-form-item label="品牌logo" :label-width="formLabelWidth">
+                <el-form-item label="品牌logo" :label-width="formLabelWidth" prop="logoUrl">
                     <el-upload action="/api/admin/product/fileUpload" 
-                    list-type="picture-card" 
-                    :before-upload="beforeAvatarUpload"
-                    :on-success="handleAvatarSuccess"
-                    :limit="1"
-                    :on-exceed="handleExceed"
-                    ref="upload"
-                    :file-list="fileList"
-                    :on-remove="handleRemove"
-                    :on-preview="handlePictureCardPreview"
-                    :auto-upload="true">
+                        list-type="picture-card"
+                        :before-upload="beforeAvatarUpload" 
+                        :on-success="handleAvatarSuccess" 
+                        :limit="1"
+                        :on-exceed="handleExceed" 
+                        ref="upload" 
+                        :file-list="fileList" 
+                        :on-remove="handleRemove"
+                        :on-preview="handlePictureCardPreview" 
+                        :auto-upload="true">
                         <el-icon>
                             <Plus />
                         </el-icon>
@@ -57,7 +63,9 @@
                             <div>
                                 <!-- <img class="el-upload-list__item-thumbnail" :src="file.url" alt="" /> -->
                                 <img v-if="trademarkParams.logoUrl" :src="trademarkParams.logoUrl" class="avatar" />
-                                <el-icon v-else class="avatar-uploader-icon"><Plus /></el-icon>
+                                <el-icon v-else class="avatar-uploader-icon">
+                                    <Plus />
+                                </el-icon>
                                 <span class="el-upload-list__item-actions">
                                     <span class="el-upload-list__item-preview" @click="handlePictureCardPreview(file)">
                                         <el-icon><zoom-in /></el-icon>
@@ -84,9 +92,7 @@
             <template #footer>
                 <div class="dialog-footer">
                     <el-button @click="cancel">取消</el-button>
-                    <el-button type="primary" @click="confirm">
-                        确定
-                    </el-button>
+                    <el-button type="primary" @click="confirm">确定</el-button>
                 </div>
             </template>
         </el-dialog>
@@ -96,9 +102,9 @@
 <script setup lang="ts">
 import { onMounted, ref, reactive } from 'vue';
 import type { ComponentSize, UploadFile, UploadProps, UploadRawFile, UploadInstance } from 'element-plus';
-import { reqHasTrademark, reqAddOrUpdateTrademark } from '@/api/product/trademark';
+import { reqHasTrademark, reqAddOrUpdateTrademark, reqDeleteTrademark } from '@/api/product/trademark';
 import type { Records, TradeMarkResponseData, TradeMark } from '@/api/product/trademark/type';
-import { ElMessage, genFileId  } from "element-plus";
+import { ElMessage, genFileId } from "element-plus";
 
 const currentPage = ref(1);
 const pageSize = ref(10);
@@ -114,6 +120,7 @@ const dialogImageUrl = ref('')
 const dialogVisible = ref(false)
 const upload = ref<UploadInstance>()
 const fileList = ref([])
+const formRef = ref()
 
 const trademarkParams = reactive<TradeMark>({
     tmName: '',
@@ -144,34 +151,59 @@ const getHasTrademark = async () => {
 const addTrademark = () => {
     dialogFormVisible.value = true;
     // 清空trademarkParams数据
+    trademarkParams.id = 0;
     trademarkParams.tmName = '';
     trademarkParams.logoUrl = '';
     fileList.value = [];
+    // 清理校验结果
+    formRef.value.clearValidate();
 }
 
-const updateTrademark = (row:TradeMark) => {
+const updateTrademark = (row: TradeMark) => {
     dialogFormVisible.value = true;
     // trademarkParams.id = row.id;
     // trademarkParams.tmName = row.tmName;
     // trademarkParams.logoUrl = row.logoUrl;
     Object.assign(trademarkParams, row);
-    fileList.value = row.logoUrl ? [{ name: "logo.png", url: row.logoUrl }] : [];
+    // fileList.value = row.logoUrl ? [{ name: "logo.png", url: row.logoUrl }] : [];
+    fileList.value = row.logoUrl ? [{ name: "logo.png", url: row.logoUrl, uid: genFileId() }] : [];
 }
 
-const deleteTrademark = () => {
-    dialogFormVisible.value = true;
+const deleteTrademark = async (id: number) => {
+    // 发送删除请求，判断是否成功并给出相应提示，然后重新刷新页面
+    let result = await reqDeleteTrademark(id);
+    if (result.code === 200) {
+        ElMessage.success('删除品牌成功');
+        getHasTrademark();
+    } else {
+        ElMessage.error('删除品牌失败');
+    }
 }
 
-const confirm = async() => {
-    let result:any = await reqAddOrUpdateTrademark(trademarkParams);
-    
+const confirm = async () => {
+    if (!formRef.value && !fileList.value) {
+        ElMessage.error("表单未加载，请重试！");
+        return;
+    }
+
+    // 发起请求前，先对整个表单做校验
+    try {
+        await formRef.value.validate(); // 校验通过是true
+    } catch (err) {
+        console.log('confirm error', err, formRef.value);
+        ElMessage.error("请检查输入内容！");
+        return;
+    }
+
+    let result: any = await reqAddOrUpdateTrademark(trademarkParams);
+
     // 关闭dialog，弹出提示成功，重新获取全部数据
     if (result.code === 200) {
-        let message = trademarkParams.id? '修改品牌成功!' : '添加品牌成功！'
+        let message = trademarkParams.id ? '修改品牌成功!' : '添加品牌成功！'
         ElMessage.success(message);
         getHasTrademark();
     } else {
-        let message = trademarkParams.id? '修改品牌失败!' : '添加品牌失败！'
+        let message = trademarkParams.id ? '修改品牌失败!' : '添加品牌失败！'
         ElMessage.error(message);
     }
     dialogFormVisible.value = false;
@@ -183,6 +215,7 @@ const cancel = () => {
 
 const handleRemove = (file: UploadFile) => {
     fileList.value = [];
+    trademarkParams.logoUrl = '';
 }
 
 const handlePictureCardPreview = (file: UploadFile) => {
@@ -196,7 +229,6 @@ const handleDownload = (file: UploadFile) => {
 
 
 const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile) => {
-
     if (rawFile.type !== 'image/jpeg' && rawFile.type !== 'image/png') {
         ElMessage.error('上传的文件必须是 JPEG 或 PNG!');
         return false;
@@ -207,19 +239,45 @@ const beforeAvatarUpload: UploadProps['beforeUpload'] = (rawFile) => {
     return true;
 }
 
-const handleAvatarSuccess: UploadProps['onSuccess'] = (response, uploadFile) => {
-//   trademarkParams.logoUrl = URL.createObjectURL(uploadFile.raw!);
-  trademarkParams.logoUrl = response.data;
-  ElMessage.success("图片上传成功");
+const handleAvatarSuccess: UploadProps['onSuccess'] = (response) => {
+    // trademarkParams.logoUrl = URL.createObjectURL(uploadFile.raw!);
+    trademarkParams.logoUrl = response.data;
+    ElMessage.success("图片上传成功");
+    // 清除掉对应的图片校验
+    formRef.value.clearValidate('logoUrl');
 }
 
 const handleExceed: UploadProps['onExceed'] = (files) => {
-  upload.value!.clearFiles();
-  const file = files[0] as UploadRawFile;
-  file.uid = genFileId();
-  upload.value!.handleStart(file);
+    upload.value!.clearFiles();
+    const file = files[0] as UploadRawFile;
+    file.uid = genFileId();
+    upload.value!.handleStart(file);
 }
 
+const validatorTmName = (rule: any, value: any, callback: any) => {
+    if (value.trim().length >= 2) {
+        callback();
+    } else {
+        callback(new Error('品牌名称要大于等于2位'))
+    }
+}
+
+const validatorLogoUrl = (rule: any, value: any, callback: any) => {
+    if (value) {
+        callback();
+    } else {
+        callback(new Error("LOGO图片必须上传"))
+    }
+}
+
+const trademarkRules = {
+    tmName: [
+        { required: true, trigger: 'blur', validator: validatorTmName }
+    ],
+    logoUrl: [
+        { required: true, trigger: 'change', validator: validatorLogoUrl }
+    ]
+}
 
 onMounted(() => getHasTrademark());
 
