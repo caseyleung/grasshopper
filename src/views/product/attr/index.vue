@@ -1,24 +1,5 @@
 <template>
     <div>
-        <el-card>
-            <label for="province">省份：</label>
-            <select id="province" v-model="selectedProvince">
-                <option value="">请选择</option>
-                <option v-for="p in provinces" :key="p.code" :value="p.code">{{ p.name }}</option>
-            </select>
-
-            <label for="city">城市：</label>
-            <select id="city" v-model="selectedCity" :disabled="cities.length === 0">
-                <option value="">请选择</option>
-                <option v-for="c in cities" :key="c.code" :value="c.code">{{ c.name }}</option>
-            </select>
-
-            <label for="district">区县：</label>
-            <select id="district" v-model="selectedDistrict" :disabled="districts.length === 0">
-                <option value="">请选择</option>
-                <option v-for="d in districts" :key="d.code" :value="d.code">{{ d.name }}</option>
-            </select>
-        </el-card>
         <Category :scene="scene"></Category>
         <el-card style="margin: 10px 0px;">
             <div class="table" v-show="scene === 0">
@@ -36,8 +17,13 @@
                     </el-table-column>
                     <el-table-column label="操作" align="center" width="120px">
                         <template #="{ row, $index }">
-                            <el-button type="warning" size="small" icon="Edit" @click="updateAttr"></el-button>
-                            <el-button type="danger" size="small" icon="Delete" @click="deleteAttr"></el-button>
+                            <el-button type="warning" size="small" icon="Edit" @click="updateAttr(row)"></el-button>
+                            <el-popconfirm :title="`您确定要删除 ${row.attrName} 属性吗？`" width="260px" icon="Delete"
+                                icon-color="red" @confirm="deleteAttr(row)">
+                                <template #reference>
+                                    <el-button type="danger" size="small" icon="Delete"></el-button>
+                                </template>
+                            </el-popconfirm>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -56,9 +42,10 @@
                             <template #="{ row, $index }">
                                 <div v-if="row.editing">
                                     <el-input v-model="row.valueName" placeholder="请输入属性值名称"
-                                        @blur="checkEditing(row, $index)"></el-input>
+                                        @blur="checkEditing(row, $index)" :ref="(el) => setInputRef(el, $index)">
+                                    </el-input>
                                 </div>
-                                <div v-else @click="row.editing = true">
+                                <div v-else @click="inputEditing(row, $index)">
                                     {{ row.valueName || '点击输入属性值名称' }}
                                 </div>
                             </template>
@@ -81,8 +68,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, watch, onMounted } from "vue";
-import { reqAddOrUpdateAttr, reqAttr } from "@/api/product/attr";
+import { ref, reactive, watch, nextTick, onBeforeUnmount, ComponentPublicInstance } from "vue";
+import { reqAddOrUpdateAttr, reqAttr, reqDelAttr } from "@/api/product/attr";
 import type { AttrResponseData, Attr, AttrValue } from "@/api/product/attr/type";
 import useCategoryStore from "@/store/modules/category";
 import { ElMessage } from "element-plus";
@@ -95,7 +82,8 @@ let attrParams = reactive<Attr>({
     attrValueList: [],
     categoryId: '',
     categoryLevel: 3,
-})
+});
+const inputRefs = ref<(HTMLElement | null)[]>([]);
 
 watch(() => categoryStore.c3Id, () => {
     attrArr.value = [];
@@ -104,12 +92,22 @@ watch(() => categoryStore.c3Id, () => {
     }
 })
 
+const setInputRef = (el: Element | ComponentPublicInstance | null, index: number) => {
+    if (el instanceof HTMLElement) {
+        inputRefs.value[index] = el;
+    } else if (el && '$el' in el) {
+        inputRefs.value[index] = el.$el as HTMLElement;
+    }
+}
+
 // 获取已有的属性与属性值的方法
 const getAttr = async () => {
     const { c1Id, c2Id, c3Id } = categoryStore;
     let result: AttrResponseData = await reqAttr(c1Id, c2Id, c3Id);
     if (result.code === 200) {
         attrArr.value = result.data;
+    } else {
+        throw new Error(result.message);
     }
 }
 
@@ -130,12 +128,25 @@ const checkEditing = (row: AttrValue, $index: number) => {
     row.editing = false;
 };
 
+const inputEditing = (row: AttrValue, $index: number) => {
+    row.editing = true;
+
+    nextTick(() => {
+        inputRefs.value[$index]?.focus();
+    })
+}
 
 const handleAddAttr = () => {
     attrParams.attrValueList.push({
         valueName: '',
         editing: true,
-    })
+    });
+
+    nextTick(() => {
+        // 自动聚焦到最新添加的输入框
+        const lastIndex = attrParams.attrValueList.length - 1;
+        inputRefs.value[lastIndex]?.focus();
+    });
 }
 
 const save = async () => {
@@ -161,12 +172,26 @@ const addAttr = () => {
     scene.value = 1;
 }
 
-const updateAttr = () => {
+const updateAttr = (row: Attr) => {
     scene.value = 1;
+    // 浅拷贝和深拷贝
+    // attrParams.attrName = row.attrName;
+    // attrParams.attrValueList = row.attrValueList;
+    // Object.assign(attrParams, structuredClone(row));  // 不能处理 DOM 节点
+    Object.assign(attrParams, JSON.parse(JSON.stringify(row)));
+    save();
 }
 
-const deleteAttr = () => {
-    console.log(111);
+const deleteAttr = async (row: Attr) => {
+    let result: any = await reqDelAttr(row.id);
+    if (result.code === 200) {
+        ElMessage.success(`${row.attrName} 删除成功！`);
+        // getAttr();
+        // 直接从 attrArr 中移除被删除的属性，避免额外的请求
+        attrArr.value = attrArr.value.filter(attr => attr.id !== row.id);
+    } else {
+        ElMessage.error(`${row.attrName} 删除失败！`);
+    }
 }
 
 const deleteAttrRow = (rowIndex: number) => {
@@ -177,66 +202,9 @@ const cancel = () => {
     scene.value = 0;
 }
 
-// **定义地区类型**
-interface Area {
-    code: number;
-    name: string;
-    level: number;
-    pcode: number;
-    children?: Area[];
-}
-
-// **存储地区数据**
-const chinaData = ref<Area[]>([]);
-const provinces = ref<Area[]>([]);
-const cities = ref<Area[]>([]);
-const districts = ref<Area[]>([]);
-
-// **选中的省、市、区**
-const selectedProvince = ref<number | null>(null);
-const selectedCity = ref<number | null>(null);
-const selectedDistrict = ref<number | null>(null);
-
-// **1. 读取 area.json**
-onMounted(async () => {
-    try {
-        const response = await fetch("/src/area_code_2022.json"); // 确保 area.json 在 public 目录
-        chinaData.value = await response.json();
-        provinces.value = chinaData.value; // 顶层即省份
-    } catch (error) {
-        console.error("加载 area.json 失败:", error);
-    }
-});
-
-// **2. 省份变化 -> 加载城市**
-watch(selectedProvince, (provinceCode) => {
-    selectedCity.value = null;
-    selectedDistrict.value = null;
-    cities.value = [];
-    districts.value = [];
-
-    if (!provinceCode) return;
-
-    const province = chinaData.value.find((p) => p.code === provinceCode);
-    if (province && province.children) {
-        cities.value = province.children;
-    }
-});
-
-// **3. 城市变化 -> 加载区县**
-watch(selectedCity, (cityCode) => {
-    selectedDistrict.value = null;
-    districts.value = [];
-
-    if (!cityCode) return;
-
-    const province = chinaData.value.find((p) => p.children?.some((c) => c.code === cityCode));
-    const city = province?.children?.find((c) => c.code === cityCode);
-    if (city && city.children) {
-        districts.value = city.children;
-    }
-});
-
+onBeforeUnmount(() => {
+    categoryStore.$reset();
+})
 </script>
 
 <style scoped lang="scss">

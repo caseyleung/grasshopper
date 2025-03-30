@@ -43,7 +43,7 @@ request.interceptors.response.use(
         msg = "服务器出现错误";
         break;
       default:
-        msg = "服务器宕机或正在维护";
+        msg = "请求获取失败，请稍后重试！";
         break;
     }
     ElMessage({
