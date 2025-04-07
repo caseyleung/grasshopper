@@ -10,6 +10,7 @@ import globalComponents from "@/components";
 import router from "./router";
 import pinia from "./store";
 import './permission';
+import './assets/styles/global.scss';
 
 const app = createApp(App);
 

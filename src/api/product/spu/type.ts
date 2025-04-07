@@ -4,12 +4,12 @@ interface ResponseData {
   ok: boolean;
 }
 
-interface SpuData {
+export interface SpuData {
   id?: number;
   spuName: string;
   description: string;
   category3Id: string | number;
-  tmId: number;
+  tmId: number | string;
   spuSaleAttrList?: any[] | null;
   spuImageList?: any[] | null;
   spuPosterList?: any[] | null;
@@ -39,12 +39,14 @@ export interface AllTrademark extends ResponseData {
 }
 
 export interface SpuImage {
-  id: number;
+  id?: number;
+  name: string;
+  url: string;
   createTime?: string;
   updateTime?: string;
-  spuId: number;
-  imgName: string;
-  imgUrl: string;
+  spuId?: number;
+  imgName?: string;
+  imgUrl?: string;
 }
 
 export interface SpuHasImg extends ResponseData {
@@ -55,11 +57,11 @@ export interface SaleAttrValue {
   id?: number;
   createTime?: string;
   updateTime?: string;
-  spuId: number;
+  spuId?: number;
   baseSaleAttrId: number;
   saleAttrValueName: string;
   saleAttrName: string;
-  isCheck: boolean;
+  isChecked?: any;
 }
 
 export type spuSaleAttrValueList = SaleAttrValue[];
@@ -68,10 +70,13 @@ export interface SaleAttr {
   id?: number;
   createTime?: string;
   updateTime?: string;
-  spuId: number;
-  baseSaleAttrId: number;
-  saleAttrName: string;
-  spuSaleAttrValueList: spuSaleAttrValueList;
+  // spuId?: number;
+  name?: string;
+  baseSaleAttrId?: number;
+  saleAttrName?: string;
+  spuSaleAttrValueList?: spuSaleAttrValueList;
+  editing?: boolean;
+  spuSaleAttrValue?:string;
 }
 
 export interface SaleAttrResponseData extends ResponseData {
@@ -79,8 +84,10 @@ export interface SaleAttrResponseData extends ResponseData {
 }
 
 export interface HasSaleAttr {
-  id: number;
+  id?: number;
   name: string;
+  createTime?: string;
+  updateTime?: string;
 }
 
 export interface HasSaleAttrResponseData extends ResponseData {

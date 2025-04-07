@@ -4,6 +4,7 @@ import type {
   HasSaleAttrResponseData,
   HasSpuResponseData,
   SaleAttrResponseData,
+  SpuData,
   SpuHasImg,
 } from "./type";
 
@@ -11,8 +12,10 @@ enum API {
   HAS_SPU_URL = "/admin/product/",
   ALL_TRADEMARK_URL = "/admin/product/baseTrademark/getTrademarkList",
   SPU_IMAGE_LIST_URL = "/admin/product/spuImageList/",
-  SPU_SALE_ATTR_LIST_URL = "admin/product/spuSaleAttrList/",
-  ALL_SALE_ATTR_LIST = "admin/product/baseSaleAttrList",
+  SPU_SALE_ATTR_LIST_URL = "/admin/product/spuSaleAttrList/",
+  ALL_SALE_ATTR_LIST = "/admin/product/baseSaleAttrList",
+  ADD_SPU_URL = "/admin/product/saveSpuInfo",
+  UPDATE_SPU_URL = "/admin/product/saveSpuInfo",
 }
 
 export const reqHasSpu = (
@@ -36,3 +39,11 @@ export const reqSpuSaleAttrList = (spuId: number) =>
 
 export const reqAllSaleAttrList = () =>
   request.get<any, HasSaleAttrResponseData>(API.ALL_SALE_ATTR_LIST);
+
+export const reqAddOrUpdateSpu = (data: SpuData) => {
+  if (data.id) {
+    return request.post<any, any>(API.UPDATE_SPU_URL, data);
+  } else {
+    return request.post<any, any>(API.ADD_SPU_URL, data);
+  }
+};
