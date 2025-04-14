@@ -76,7 +76,8 @@ export interface SaleAttr {
   saleAttrName?: string;
   spuSaleAttrValueList?: spuSaleAttrValueList;
   editing?: boolean;
-  spuSaleAttrValue?:string;
+  spuSaleAttrValue?: string;
+  saleIdAndValueId?: string;
 }
 
 export interface SaleAttrResponseData extends ResponseData {
@@ -92,4 +93,27 @@ export interface HasSaleAttr {
 
 export interface HasSaleAttrResponseData extends ResponseData {
   data: HasSaleAttr[];
+}
+
+export interface SkuData {
+  category3Id: number | string;
+  spuId: number | string;
+  skuName: string;
+  tmId: number | string;
+  price: number;
+  weight: number;
+  skuDesc: string;
+  skuAttrValueList?: {
+    attrId: number | string;
+    valueId: number | string;
+  }[];
+  skuDefaultImg: string;
+  skuSaleAttrValueList?: {
+    saleAttrId: number | string;
+    saleAttrValueId: number | string;
+  }[];
+}
+
+export interface SkuInfoData extends ResponseData {
+  data: SkuData[];
 }

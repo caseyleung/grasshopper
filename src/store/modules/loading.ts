@@ -1,10 +1,10 @@
 import { defineStore } from 'pinia';
-import { ElLoading  } from 'element-plus';
-import { LoadingInstance } from 'element-plus';
+import { ElLoading } from 'element-plus';
 
+// Use `any` as a fallback to avoid type conflicts
 export const useLoadingStore = defineStore('loading', {
   state: () => ({
-    loadingInstance: null as LoadingInstance | null,
+    loadingInstance: null as any, // Type set to `any` to avoid type conflict
   }),
   actions: {
     show(message = '加载中...') {

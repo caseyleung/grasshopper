@@ -17,11 +17,17 @@
                     <el-table-column label="操作" width="240" align="center">
                         <template #="{ row, $index }">
                             <el-button type="primary" title="添加SKU" size="small" icon="Plus"
-                                @click="addSku"></el-button>
+                                @click="addSku(row)"></el-button>
                             <el-button @click="updateSpu(row)" type="warning" title="修改SPU" size="small"
                                 icon="Edit"></el-button>
-                            <el-button type="info" title="查看SKU列表" size="small" icon="MoreFilled"></el-button>
-                            <el-button type="danger" title="删除SPU" size="small" icon="Delete"></el-button>
+                            <el-button @click="findSku(row)" type="info" title="查看SKU列表" size="small"
+                                icon="MoreFilled"></el-button>
+                            <!-- <el-button type="danger" title="删除SPU" size="small" icon="Delete"></el-button> -->
+                            <el-popconfirm :title="`确定删除${row.spuName}吗？`" width="180"  @confirm="removeSpu(row.id)">
+                                <template #reference>
+                                    <el-button type="danger" title="删除SPU" size="small" icon="Delete"></el-button>
+                                </template>
+                            </el-popconfirm>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -33,18 +39,31 @@
             <!-- 1：添加或者修改SPU -->
             <SpuForm ref="spu" v-show="scene === 1" @changeScene="changeScene"></SpuForm>
             <!-- 2：添加SKU -->
-            <SkuForm v-show="scene === 2"></SkuForm>
+            <SkuForm ref="sku" v-show="scene === 2" @changeScene="changeScene"></SkuForm>
+            <!-- 3：查看SKU列表 -->
+            <el-dialog v-model="dialogVisible" title="SKU列表" width="80%">
+                <el-table :data="skuList" border>
+                    <el-table-column label="SKU名称" prop="skuName" width="140" align="center"></el-table-column>
+                    <el-table-column label="SKU价格" prop="price" align="center"></el-table-column>
+                    <el-table-column label="SKU重量" prop="weight" align="center"></el-table-column>
+                    <el-table-column label="SKU图片" align="center">
+                        <template #="{ row }">
+                            <el-image :src="row.skuDefaultImg" width="50" height="50"></el-image>
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </el-dialog>
         </el-card>
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
-import type { ComponentSize } from 'element-plus'
+import { onBeforeUnmount, ref, watch } from 'vue';
+import { ElMessage, type ComponentSize } from 'element-plus'
 import useCategoryStore from '@/store/modules/category';
-import { reqHasSpu } from '@/api/product/spu';
+import { reqHasSpu, reqRemoveSpu, reqSkuInfo } from '@/api/product/spu';
 import { HasSpuResponseData } from '@/api/product/spu/type';
-import type { Records, SpuData } from '@/api/product/spu/type';
+import type { Records, SkuData, SpuData } from '@/api/product/spu/type';
 import SpuForm from './spuForm.vue';
 import SkuForm from './skuForm.vue';
 import { useLoadingStore } from '@/store/modules/loading';
@@ -59,14 +78,22 @@ const disabled = ref(false);
 const total = ref(0);
 const tableData = ref<Records>([]);
 let spu = ref<any>();
+let sku = ref<any>();
+let skuList = ref<SkuData[]>([]);
+let dialogVisible = ref(false);
 
 let categoryStore = useCategoryStore();
 let loadingStore = useLoadingStore();
 
 const hasSpu = async () => {
-    loadingStore.show("正在加载SPU数据...")
+    //  判断是否选择了分类
+    if (!categoryStore.c3Id) {
+        ElMessage.warning("请先选择分类！");
+        return;
+    }
+    loadingStore.show("正在加载SPU数据...");
     try {
-        let result: HasSpuResponseData = await reqHasSpu(currentPage.value, pageSize.value, categoryStore.c3Id);
+        const result: HasSpuResponseData = await reqHasSpu(currentPage.value, pageSize.value, categoryStore.c3Id);
         if (result.code === 200) {
             tableData.value = result.data.records;
             total.value = result.data.total;
@@ -84,12 +111,45 @@ watch(() => categoryStore.c3Id, (newVal, oldVal) => {
     }
 })
 
-watch(()=> scene.value, (newVal, oldVal)=> {
-    if(newVal === 0) {
-        hasSpu();
-    }
-})
+// watch(()=> scene.value, (newVal, oldVal)=> {
+//     if(newVal === 0) {
+//         hasSpu();
+//     }
+// })
 
+const removeSpu = async (spuId: number | string) => {
+    loadingStore.show("正在删除SPU...");
+    try {
+        let res = await reqRemoveSpu(spuId);
+        console.log(res);
+
+        if (res.code == 200) {
+            ElMessage.success("删除SPU成功");
+            hasSpu();
+        } else {
+            ElMessage.error("删除SPU失败");
+        }
+    } finally {
+        loadingStore.hide();
+    }
+}
+
+const findSku = async (row: SpuData) => {
+    loadingStore.show("正在加载SKU列表...");
+    try {
+        let res = await reqSkuInfo(row.id);
+        console.log(res);
+
+        if (res.code == 200) {
+            skuList.value = res.data;
+            dialogVisible.value = true;
+        } else {
+            ElMessage.error("获取SKU列表失败");
+        }
+    } finally {
+        loadingStore.hide();
+    }
+}
 
 const handleSizeChange = (val: number) => {
     pageSize.value = val;
@@ -107,8 +167,9 @@ const addSpu = () => {
     spu.value.initAddSpuData(categoryStore.c3Id);
 };
 
-const addSku = () => {
-    console.log("add sku!")
+const addSku = (row: SpuData) => {
+    scene.value = 2;
+    sku.value.initSkuData(row);
 }
 
 const updateSpu = (row: SpuData) => {
@@ -121,6 +182,10 @@ const changeScene = (num: number) => {
     scene.value = num;
     hasSpu(); // 重新获取SPU数据
 }
+
+onBeforeUnmount(() => {
+    categoryStore.$reset();
+})
 
 </script>
 
