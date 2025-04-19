@@ -75,9 +75,9 @@ export const constantRoute = [
         },
       },
       {
-        path: "/auth/permission",
-        name: "permission",
-        component: () => import("@/views/auth/permission/index.vue"),
+        path: "/auth/menu",
+        name: "menu",
+        component: () => import("@/views/auth/menu/index.vue"),
         meta: {
           title: "菜单管理",
           hidden: false,
