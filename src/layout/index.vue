@@ -82,8 +82,8 @@ let $layoutSettingStore = useLayoutSettingStore();
         left: $base-menu-width;
         width: calc(100% - $base-menu-width);
         height: $base-tabbar-height;
-        background-color: rgb(231, 226, 226);
-        transition: all, .9s;
+        // background-color: rgb(231, 226, 226);
+        // transition: all, .9s;
 
 
         &.fold {

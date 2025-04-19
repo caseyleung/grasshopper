@@ -11,6 +11,8 @@ import router from "./router";
 import pinia from "./store";
 import './permission';
 import './assets/styles/global.scss';
+// 引入暗黑模式css
+import 'element-plus/theme-chalk/dark/css-vars.css'
 
 const app = createApp(App);
 
