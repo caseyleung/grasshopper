@@ -50,26 +50,28 @@
 import useLayoutSettingStore from '@/store/modules/setting';
 import useUserStore from '@/store/modules/user';
 import { useRouter, useRoute } from 'vue-router';
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 
-const darkMode = ref(false)
+const darkMode = ref(localStorage.getItem('darkMode') === 'true')
+const color = ref(localStorage.getItem('primaryColor') || '#409EFF')
 
 const changeDarkMode = () => {
-    let html = document.documentElement;
+    const html = document.documentElement
     if (darkMode.value) {
         html.classList.add('dark')
+        localStorage.setItem('darkMode', 'true')
     } else {
         html.classList.remove('dark')
+        localStorage.setItem('darkMode', 'false')
     }
 }
 
 const changeColor = () => {
-    // document.documentElement 是全局变量时
     const el = document.documentElement
     el.style.setProperty('--el-color-primary', color.value)
+    localStorage.setItem('primaryColor', color.value)
 }
 
-const color = ref('#409EFF')
 const predefineColors = ref([
   '#ff4500',
   '#ff8c00',
@@ -140,6 +142,12 @@ const logout = async () => {
     $router.push({ path: '/login', query: { redirect: route?.path || '/' } });
 
 }
+
+// Initialize theme on component mount
+onMounted(() => {
+    changeDarkMode()
+    changeColor()
+})
 </script>
 
 <style scoped lang="scss">
